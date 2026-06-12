@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Projects — Shivam Dev</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f7f7f5;
+      --text-primary: #1a1a18;
+      --text-secondary: #6b6b68;
+      --text-tertiary: #a3a39f;
+      --border: rgba(0,0,0,0.12);
+      --border-hover: rgba(0,0,0,0.25);
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1c1c1a;
+        --bg-secondary: #242422;
+        --text-primary: #f0ede8;
+        --text-secondary: #9c9992;
+        --text-tertiary: #5e5d59;
+        --border: rgba(255,255,255,0.1);
+        --border-hover: rgba(255,255,255,0.22);
+      }
+    }
+
+    html, body {
+      min-height: 100%;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      font-family: var(--font);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 4rem;
+    }
+
+    header {
+      margin-bottom: 2.5rem;
+    }
+
+    header h1 {
+      font-size: 24px;
+      font-weight: 500;
+      color: var(--text-primary);
+      letter-spacing: -0.3px;
+    }
+
+    header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: 6px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      text-decoration: none;
+      display: block;
+      transition: border-color 0.18s, transform 0.18s;
+    }
+
+    .card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+    }
+
+    .preview {
+      width: 100%;
+      height: 200px;
+      background: var(--bg-secondary);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+      display: block;
+    }
+
+    .preview-fallback {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--text-tertiary);
+      font-size: 13px;
+    }
+
+    .preview-fallback i { font-size: 28px; }
+
+    .card-body {
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 0.5px solid var(--border);
+    }
+
+    .card-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .card-url {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .card-icon {
+      font-size: 16px;
+      color: var(--text-secondary);
+    }
+
+    footer {
+      margin-top: 3rem;
+      font-size: 12px;
+      color: var(--text-tertiary);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <h1>Projects</h1>
+      <p>A selection of websites I've designed and developed.</p>
+    </header>
+
+    <div class="grid" id="grid"></div>
+
+    <footer>Add more projects by editing the <code>projects</code> array in this file.</footer>
+  </div>
+
+  <script>
+    const projects = [
+      { name: "Shivam Dev", url: "https://www.shivamdev24.in" },
+      // { name: "Project Two", url: "https://your-project-url.com" },
+      // { name: "Project Three", url: "https://another-project.com" },
+    ];
+
+    const grid = document.getElementById('grid');
+
+    projects.forEach(p => {
+      const hostname = new URL(p.url).hostname.replace('www.', '');
+      const screenshotUrl = `https://api.microlink.io/?url=${encodeURIComponent(p.url)}&screenshot=true&meta=false&embed=screenshot.url`;
+
+      const card = document.createElement('a');
+      card.className = 'card';
+      card.href = p.url;
+      card.target = '_blank';
+      card.rel = 'noopener noreferrer';
+
+      card.innerHTML = `
+        <div class="preview" id="preview-${hostname}">
+          <div class="preview-fallback">
+            <i class="ti ti-loader-2"></i>
+            <span>Loading preview…</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="card-name">${p.name}</div>
+            <div class="card-url">${hostname}</div>
+          </div>
+          <i class="ti ti-arrow-up-right card-icon"></i>
+        </div>
+      `;
+
+      grid.appendChild(card);
+
+      fetch(screenshotUrl)
+        .then(r => r.json())
+        .then(data => {
+          const imgUrl = data?.data?.screenshot?.url;
+          const previewEl = card.querySelector('.preview');
+          if (imgUrl) {
+            previewEl.innerHTML = `<img src="${imgUrl}" alt="${p.name} website screenshot" />`;
+          } else {
+            showFallback(previewEl, hostname);
+          }
+        })
+        .catch(() => {
+          const previewEl = card.querySelector('.preview');
+          showFallback(previewEl, hostname);
+        });
+    });
+
+    function showFallback(el, hostname) {
+      el.innerHTML = `
+        <div class="preview-fallback">
+          <i class="ti ti-world"></i>
+          <span>${hostname}</span>
+        </div>`;
+    }
+  </script>
+</body>
+</html>
