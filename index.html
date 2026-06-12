@@ -162,16 +162,160 @@
 
   <script>
     const projects = [
-      { name: "Shivam Dev", url: "https://www.shivamdev24.in" },
-      // { name: "Project Two", url: "https://your-project-url.com" },
-      // { name: "Project Three", url: "https://another-project.com" },
-    ];
+  {
+    name: "Shivam Dev",
+    url: "https://www.shivamdev24.in"
+  },
+  {
+    name: "Noblesse Tech",
+    url: "https://www.noblessetech.com/"
+  },
+  {
+    name: "Wood & Veneer",
+    url: "https://woodandveneer.in/"
+  },
+  {
+    name: "Bir Paragliding",
+    url: "https://www.birparagliding.in/"
+  },
+  {
+    name: "ReplySync AI",
+    url: "https://replysyncai.shivamdev24.in/"
+  },
+  {
+    name: "Shelves Tech",
+    url: "https://www.shelvestech.com/"
+  },
+  {
+    name: "Revault APK",
+    url: "https://revaultapk.vercel.app/"
+  },
+  {
+    name: "Homestay",
+    url: "https://homestay-iota.vercel.app/"
+  },
+  {
+    name: "Beeryani",
+    url: "https://beeryani.vercel.app/"
+  },
+  {
+    name: "Email V1",
+    url: "https://emailv1.vercel.app/"
+  },
+  {
+    name: "Ananda Yoga",
+    url: "https://anandayoga.vercel.app/"
+  },
+  {
+    name: "Tecklo",
+    url: "https://tecklo-co.vercel.app/"
+  },
+  {
+    name: "Hotels",
+    url: "https://hotels-nine-theta.vercel.app/"
+  },
+  {
+    name: "Relastate",
+    url: "https://relastate.vercel.app/"
+  },
+  {
+    name: "Epic Hair",
+    url: "https://epic-hair.vercel.app/"
+  },
+  {
+    name: "Elixir Salon",
+    url: "https://elixir-salon.vercel.app/"
+  },
+  {
+    name: "Sallon Booking System",
+    url: "https://sbs-hazel.vercel.app/"
+  }
+];
 
     const grid = document.getElementById('grid');
 
     projects.forEach(p => {
       const hostname = new URL(p.url).hostname.replace('www.', '');
-      const screenshotUrl = `https://api.microlink.io/?url=${encodeURIComponent(p.url)}&screenshot=true&meta=false&embed=screenshot.url`;
+      // const url = `https://api.microlink.io/?url=${encodeURIComponent(p.url)}`;
+
+      // const screenshotUrl = `${url}&screenshot=true&meta=false&embed=logo.url`;
+
+      // console.log(`Fetching preview for ${p.url} from ${screenshotUrl}`);
+
+
+
+
+
+
+      projects.forEach(p => {
+  const hostname = new URL(p.url).hostname.replace('www.', '');
+
+  const card = document.createElement('a');
+  card.className = 'card';
+
+  card.innerHTML = `
+    <div class="preview">
+      <div class="preview-fallback">
+        Loading...
+      </div>
+    </div>
+    <div class="card-body">
+      <div>${p.name}</div>
+    </div>
+  `;
+
+  grid.appendChild(card);
+
+  const previewEl = card.querySelector('.preview');
+
+  const apiUrl =
+    `https://api.microlink.io/?url=${encodeURIComponent(p.url)}&screenshot=true`;
+
+  fetch(apiUrl)
+    .then(r => r.json())
+    .then(data => {
+      console.log(data);
+
+      const imgUrl = data?.data?.screenshot?.url;
+
+      if (imgUrl) {
+        previewEl.innerHTML = `
+          <img
+            src="${imgUrl}"
+            alt="${p.name}"
+            loading="lazy"
+          />
+        `;
+      } else {
+        previewEl.innerHTML = `
+          <div class="preview-fallback">
+            No preview available
+          </div>
+        `;
+      }
+    })
+    .catch(err => {
+      console.error(err);
+
+      previewEl.innerHTML = `
+        <div class="preview-fallback">
+          Preview failed
+        </div>
+      `;
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+    
 
       const card = document.createElement('a');
       card.className = 'card';
