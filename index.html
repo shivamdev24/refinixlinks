@@ -234,33 +234,30 @@
 
     const grid = document.getElementById('grid');
 
+
     projects.forEach(p => {
-      const hostname = new URL(p.url).hostname.replace('www.', '');
-      // const url = `https://api.microlink.io/?url=${encodeURIComponent(p.url)}`;
-
-      // const screenshotUrl = `${url}&screenshot=true&meta=false&embed=logo.url`;
-
-      // console.log(`Fetching preview for ${p.url} from ${screenshotUrl}`);
-
-
-
-
-
-
-      projects.forEach(p => {
   const hostname = new URL(p.url).hostname.replace('www.', '');
 
   const card = document.createElement('a');
   card.className = 'card';
+  card.href = p.url;
+  card.target = '_blank';
+  card.rel = 'noopener noreferrer';
 
   card.innerHTML = `
     <div class="preview">
       <div class="preview-fallback">
-        Loading...
+        <i class="ti ti-loader-2"></i>
+        <span>Loading preview...</span>
       </div>
     </div>
+
     <div class="card-body">
-      <div>${p.name}</div>
+      <div>
+        <div class="card-name">${p.name}</div>
+        <div class="card-url">${hostname}</div>
+      </div>
+      <i class="ti ti-arrow-up-right card-icon"></i>
     </div>
   `;
 
@@ -274,8 +271,6 @@
   fetch(apiUrl)
     .then(r => r.json())
     .then(data => {
-      console.log(data);
-
       const imgUrl = data?.data?.screenshot?.url;
 
       if (imgUrl) {
@@ -284,79 +279,19 @@
             src="${imgUrl}"
             alt="${p.name}"
             loading="lazy"
-          />
+          >
         `;
       } else {
-        previewEl.innerHTML = `
-          <div class="preview-fallback">
-            No preview available
-          </div>
-        `;
+        showFallback(previewEl, hostname);
       }
     })
-    .catch(err => {
-      console.error(err);
-
-      previewEl.innerHTML = `
-        <div class="preview-fallback">
-          Preview failed
-        </div>
-      `;
+    .catch(() => {
+      showFallback(previewEl, hostname);
     });
 });
 
 
 
-
-
-
-
-
-
-
-
-    
-
-      const card = document.createElement('a');
-      card.className = 'card';
-      card.href = p.url;
-      card.target = '_blank';
-      card.rel = 'noopener noreferrer';
-
-      card.innerHTML = `
-        <div class="preview" id="preview-${hostname}">
-          <div class="preview-fallback">
-            <i class="ti ti-loader-2"></i>
-            <span>Loading preview…</span>
-          </div>
-        </div>
-        <div class="card-body">
-          <div>
-            <div class="card-name">${p.name}</div>
-            <div class="card-url">${hostname}</div>
-          </div>
-          <i class="ti ti-arrow-up-right card-icon"></i>
-        </div>
-      `;
-
-      grid.appendChild(card);
-
-      fetch(screenshotUrl)
-        .then(r => r.json())
-        .then(data => {
-          const imgUrl = data?.data?.screenshot?.url;
-          const previewEl = card.querySelector('.preview');
-          if (imgUrl) {
-            previewEl.innerHTML = `<img src="${imgUrl}" alt="${p.name} website screenshot" />`;
-          } else {
-            showFallback(previewEl, hostname);
-          }
-        })
-        .catch(() => {
-          const previewEl = card.querySelector('.preview');
-          showFallback(previewEl, hostname);
-        });
-    });
 
     function showFallback(el, hostname) {
       el.innerHTML = `
